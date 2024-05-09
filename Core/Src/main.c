@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "spi.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -44,7 +45,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+uint8_t len;
+uint32_t times;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -88,6 +90,7 @@ int main(void)
   MX_GPIO_Init();
   MX_USART1_UART_Init();
   MX_USART3_UART_Init();
+  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -99,6 +102,13 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    USART_RX_TX(1);
+    USART_RX_TX(3);
+    delay_us(1);
+    times++;
+    if ((times % 500000) == 0) {
+      HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
+    }
   }
   /* USER CODE END 3 */
 }
@@ -149,6 +159,28 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+void delay_us(uint32_t nus) {
+  uint32_t ticks;
+  uint32_t told, tnow, tcnt = 0;
+  uint32_t reload = SysTick->LOAD;        /* LOAD的值 */
+  ticks = nus * MAIN_FREQ;                 /* 需要的节拍数 */
+  told = SysTick->VAL;                    /* 刚进入时的计数器值 */
+  while (1) {
+    tnow = SysTick->VAL;
+    if (tnow != told) {
+      if (tnow < told) {
+        tcnt += told - tnow;        /* 这里注意一下SYSTICK是一个递减的计数器就可以了 */
+      }
+      else {
+        tcnt += reload - tnow + told;
+      }
+      told = tnow;
+      if (tcnt >= ticks) {
+        break;                      /* 时间超过/等于要延迟的时间,则退出 */
+      }
+    }
+  }
+}
 
 /* USER CODE END 4 */
 

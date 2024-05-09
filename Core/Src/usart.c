@@ -21,7 +21,51 @@
 #include "usart.h"
 
 /* USER CODE BEGIN 0 */
+#include "../../Drivers/BSP/PLC/plc.h"
+#include "stdio.h"
 
+// 串口重定�?
+#ifdef __GNUC__
+#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
+#else
+#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+#endif
+PUTCHAR_PROTOTYPE
+{
+ HAL_UART_Transmit(&huart3, (uint8_t*)&ch, 1, HAL_MAX_DELAY);
+ return ch;
+}
+
+// USART3
+#define USART3_END (g_usart3_rx_sta & 0x3fff)
+
+uint8_t g_usart3_rx_buf[USART_RX_LEN];
+
+/*  接收状�??
+ *  bit15�?      接收完成标志
+ *  bit14�?      接收�?0x0d
+ *  bit13~0�?    接收到的有效字节数目
+*/
+uint16_t g_usart3_rx_sta = 0;
+
+uint8_t g_usart3_hal_rx_buffer[USART_RX_BUFFER_SIZE];  /* HAL库使用的串口接收缓冲 */
+
+// USART1
+#define USART1_END (g_usart1_rx_sta & 0x3fff)
+
+uint8_t g_usart1_rx_buf[USART_RX_LEN];
+
+/*  接收状�??
+ *  bit15�?      接收完成标志
+ *  bit14�?      接收�?0x0d
+ *  bit13~0�?    接收到的有效字节数目
+*/
+uint16_t g_usart1_rx_sta = 0;
+
+uint8_t g_usart1_hal_rx_buffer[USART_RX_BUFFER_SIZE];  /* HAL库使用的串口接收缓冲 */
+
+void USART1_RX_USART3_TX();
+void USART3_RX_USART1_TX();
 /* USER CODE END 0 */
 
 UART_HandleTypeDef huart1;
@@ -81,7 +125,7 @@ void MX_USART3_UART_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN USART3_Init 2 */
-
+  HAL_UART_Receive_IT(&huart3, (uint8_t *)g_usart3_hal_rx_buffer, USART_RX_BUFFER_SIZE);
   /* USER CODE END USART3_Init 2 */
 
 }
@@ -192,5 +236,86 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 }
 
 /* USER CODE BEGIN 1 */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+	if (huart->Instance == USART3) {                                  // USART3(PC)
+		if ((g_usart3_rx_sta & 0x8000) == 0) {                          // 接收未完�? 
+			if (!(g_usart3_rx_sta & 0x4000)) {                            // 未接收到0x0D（回�?)
+				if (g_usart3_hal_rx_buffer[0] == 0x0d) {                     // 接收�?0x0D
+					g_usart3_rx_sta |= 0x4000;                                // 回车标志�? �?1
+				} else {
+          g_usart3_rx_buf[USART3_END] = g_usart3_hal_rx_buffer[0];  // 将接收到的字符放入rx_buf�?
+          g_usart3_rx_sta += 1;
+          if (USART3_END > USART_RX_LEN - 1) {
+            g_usart3_rx_sta = 0;                                    // 接收数据大于200，重新接�?
+          }
+				}
+			} else {
+        if (g_usart3_hal_rx_buffer[0] == 0x0a) {
+          g_usart3_rx_sta |= 0x8000;                                // 接收完成
+        } else {
+          g_usart3_rx_sta = 0;                                      // 接收错误，重新接�?
+        }
+      }
+		}
+    HAL_UART_Receive_IT(&huart3, (uint8_t *)g_usart3_hal_rx_buffer, USART_RX_BUFFER_SIZE);
+	} else {                                                          // USART1(PLC)
+    if ((g_usart1_rx_sta & 0x8000) == 0) {                          // 接收未完�? 
+			if (!(g_usart1_rx_sta & 0x4000)) {                            // 未接收到0x0D（回�?)
+				if (g_usart1_hal_rx_buffer[0] == 0x0d) {                     // 接收�?0x0D
+					g_usart1_rx_sta |= 0x4000;                                // 回车标志�? �?1
+				} else {
+          g_usart1_rx_buf[USART1_END] = g_usart1_hal_rx_buffer[0];  // 将接收到的字符放入rx_buf�?
+          g_usart1_rx_sta += 1;
+          if (USART1_END > USART_RX_LEN - 1) {
+            g_usart1_rx_sta = 0;                                    // 接收数据大于200，重新接�?
+          }
+				}
+			} else {
+        if (g_usart1_hal_rx_buffer[0] == 0x0a) {
+          g_usart1_rx_sta |= 0x8000;                                // 接收完成
+        } else {
+          g_usart1_rx_sta = 0;                                      // 接收错误，重新接�?
+        }
+      }
+		}
+    HAL_UART_Receive_IT(&huart1, (uint8_t *)g_usart1_hal_rx_buffer, USART_RX_BUFFER_SIZE);
+  }
+}
 
+void USART_RX_TX(uint8_t id) {
+  if (id == 1) {
+    USART1_RX_USART3_TX();
+  } else if (id == 3) {
+    USART3_RX_USART1_TX();
+  }
+}
+
+void USART1_RX_USART3_TX() { // USART1(PLC) reveive info and send to USART3(PC)
+  if (g_usart1_rx_sta & 0x8000) { // USART1 receive PLC info
+    uint32_t len;
+    len = g_usart1_rx_sta & 0x3fff;
+    // send message to USART3(PC)
+    printf("\r\nPLC message:\r\n");
+    HAL_UART_Transmit(&huart3, (uint8_t*)g_usart1_rx_buf, len, 1000);
+    while(__HAL_UART_GET_FLAG(&huart1, UART_FLAG_TC) != SET);
+    printf("\r\n\r\n");
+    g_usart1_rx_sta = 0;
+  }
+}
+
+void USART3_RX_USART1_TX() { // USART3(PC) reveive info and send to USART1(PLC)
+  if (g_usart3_rx_sta & 0x8000) { // USART3 receive PC info
+    uint32_t len;
+    len = g_usart3_rx_sta & 0x3fff;
+    if (g_usart3_rx_buf[0] == 0x01) { // first Byte is 1, send PC message to PLC
+      // send message to USART1(PLC)
+      HAL_UART_Transmit(&huart1, (uint8_t*)(&g_usart3_rx_buf[1]), len - 1, 1000);
+      while(__HAL_UART_GET_FLAG(&huart1, UART_FLAG_TC) != SET);
+    } else if (g_usart3_rx_buf[0] == 0x00) { // first Byte is 0, change PLC mode
+      plc_change_mode(g_usart3_rx_buf[1]);
+      printf("\r\n\r\n");
+    }
+    g_usart3_rx_sta = 0;
+  }
+}
 /* USER CODE END 1 */
