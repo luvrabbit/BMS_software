@@ -94,14 +94,16 @@ int main(void)
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
   uint8_t test[4] = {10, 109, 97, 10};
-  uint8_t nrf_rx[33];
+  uint8_t nrf_tx[32];
   nrf_init();
   while(nrf_check()) {
-    delay_us(100000);
-    printf("\n nrf not ready \n");
+    delay_us(200000);
+    HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
   }
-  printf("\n nrf ready \n");
-  nrf_rx_mode();
+  nrf_tx_mode();
+  for (int i; i < 32; i++) {
+	  nrf_tx[i] = i;
+  }
 
   /* USER CODE END 2 */
 
@@ -116,14 +118,15 @@ int main(void)
 //    USART_RX_TX(3);
     delay_us(1);
     times++;
-    if ((times % 500000) == 0) {
+    if ((times % 50) == 0) {
       HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
     }
-        if (nrf_rx_packet(nrf_rx) == 0) {
-          nrf_rx[32] = 0;
-          HAL_UART_Transmit(&huart3, nrf_rx, 33, 1000);
-        }
-      }
+    if (nrf_tx_packet(nrf_tx) == 0) {
+    	if ((times % 500000) == 0) {
+    		HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
+    	}
+    }
+  }
   /* USER CODE END 3 */
 }
 
