@@ -106,8 +106,8 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-//    USART_RX_TX(1);
-//    USART_RX_TX(3);
+    USART_RX_TX(1);
+    USART_RX_TX(3);
 //    delay_us(1);
     times++;
     if ((times % 500000) == 0) {
