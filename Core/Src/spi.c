@@ -127,4 +127,12 @@ uint8_t spi1_read_write_byte(uint8_t txdata) {
   return rxdata;
 }
 
+void spi1_set_speed(uint8_t speed) {
+    assert_param(IS_SPI_BAUDRATE_PRESCALER(speed));
+    __HAL_SPI_DISABLE(&hspi1);	
+    hspi1.Instance->CR1 &= 0XFFC7;
+    hspi1.Instance->CR1 |= speed << 3;
+    __HAL_SPI_ENABLE(&hspi1); 
+}
+
 /* USER CODE END 1 */

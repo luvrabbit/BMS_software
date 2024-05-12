@@ -21,6 +21,7 @@
 #include "spi.h"
 #include "usart.h"
 #include "gpio.h"
+#include "../../Drivers/BSP/NRF24L01P/nrf24l01p.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -92,6 +93,9 @@ int main(void)
   MX_USART3_UART_Init();
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
+  uint8_t test[4] = {10, 109, 97, 10};
+  uint8_t nrf_rx[33];
+  nrf_init();
 
   /* USER CODE END 2 */
 
@@ -102,12 +106,25 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    USART_RX_TX(1);
-    USART_RX_TX(3);
-    delay_us(1);
+//    USART_RX_TX(1);
+//    USART_RX_TX(3);
+//    delay_us(1);
     times++;
     if ((times % 500000) == 0) {
       HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
+    }
+    if (g_usart3_rx_sta & 0x8000) { // USART3 receive PC info
+      uint32_t len;
+      len = g_usart3_rx_sta & 0x3fff; // message length
+      if (g_usart3_rx_buf[0] == 0x01) { // first Byte is 1, send PC message to PLC
+    	  printf("\n 收到PC message \n");
+        nrf_rx_mode();
+        if (nrf_rx_packet(nrf_rx) == 0) {
+          nrf_rx[32] = 0;
+          HAL_UART_Transmit(huart3, nrf_rx, 33, 1000);
+        }
+      }
+      g_usart3_rx_sta = 0;
     }
   }
   /* USER CODE END 3 */

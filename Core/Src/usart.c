@@ -22,7 +22,7 @@
 
 /* USER CODE BEGIN 0 */
 #include "../../Drivers/BSP/PLC/plc.h"
-#include "stdio.h"
+
 
 // 串口重定�?
 #ifdef __GNUC__
@@ -282,6 +282,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
   }
 }
 
+// id == 1: USART1(PLC) reveive info and send to USART3(PC)
+// id == 3: USART3(PC) reveive info and send to USART1(PLC)
 void USART_RX_TX(uint8_t id) {
   if (id == 1) {
     USART1_RX_USART3_TX();

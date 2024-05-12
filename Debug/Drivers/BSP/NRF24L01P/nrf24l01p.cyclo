@@ -1,0 +1,11 @@
+../Drivers/BSP/NRF24L01P/nrf24l01p.c:6:6:nrf_spi_init	1
+../Drivers/BSP/NRF24L01P/nrf24l01p.c:14:6:nrf_init	1
+../Drivers/BSP/NRF24L01P/nrf24l01p.c:21:9:nrf_check	4
+../Drivers/BSP/NRF24L01P/nrf24l01p.c:44:9:nrf_write_reg	1
+../Drivers/BSP/NRF24L01P/nrf24l01p.c:58:9:nrf_read_reg	1
+../Drivers/BSP/NRF24L01P/nrf24l01p.c:67:9:nrf_write_buf	2
+../Drivers/BSP/NRF24L01P/nrf24l01p.c:80:9:nrf_read_buf	2
+../Drivers/BSP/NRF24L01P/nrf24l01p.c:93:6:nrf_rx_mode	1
+../Drivers/BSP/NRF24L01P/nrf24l01p.c:105:6:nrf_tx_mode	1
+../Drivers/BSP/NRF24L01P/nrf24l01p.c:118:9:nrf_rx_packet	2
+../Drivers/BSP/NRF24L01P/nrf24l01p.c:135:9:nrf_tx_packet	4

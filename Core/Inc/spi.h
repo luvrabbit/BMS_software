@@ -42,6 +42,7 @@ void MX_SPI1_Init(void);
 
 /* USER CODE BEGIN Prototypes */
 uint8_t spi1_read_write_byte(uint8_t txdata);
+void spi1_set_speed(uint8_t speed);
 
 /* USER CODE END Prototypes */
 
