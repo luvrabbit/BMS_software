@@ -121,7 +121,7 @@ int main(void)
         nrf_rx_mode();
         if (nrf_rx_packet(nrf_rx) == 0) {
           nrf_rx[32] = 0;
-          HAL_UART_Transmit(huart3, nrf_rx, 33, 1000);
+          HAL_UART_Transmit(&huart3, nrf_rx, 33, 1000);
         }
       }
       g_usart3_rx_sta = 0;
