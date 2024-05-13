@@ -297,10 +297,10 @@ void USART1_RX_USART3_TX() { // USART1(PLC) reveive info and send to USART3(PC)
     uint32_t len;
     len = g_usart1_rx_sta & 0x3fff;
     // send message to USART3(PC)
-    printf("\r\nPLC message:\r\n");
+    printf("\r\n PLC message: \r\n");
     HAL_UART_Transmit(&huart3, (uint8_t*)g_usart1_rx_buf, len, 1000);
-    while(__HAL_UART_GET_FLAG(&huart1, UART_FLAG_TC) != SET);
-    printf("\r\n\r\n");
+    while(__HAL_UART_GET_FLAG(&huart1, UART_FLAG_TC) != SET); // wait until sending end
+    printf("\r\n PLC end \r\n");
     g_usart1_rx_sta = 0;
   }
 }
