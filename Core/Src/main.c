@@ -94,6 +94,7 @@ int main(void)
   MX_SPI1_Init();
 
   /* USER CODE BEGIN 2 */
+  HAL_GPIO_WritePin(PLC_MODE_GPIO_Port, PLC_MODE_Pin, GPIO_PIN_SET);
   for (int i = 0; i < 5; i++) {
     PLCTEST[i] = i + 1;
   }
