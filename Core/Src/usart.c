@@ -323,6 +323,6 @@ void USART3_RX_USART1_TX() { // USART3(PC) reveive info and send to USART1(PLC)
 
 void USART1_TX(uint8_t* tx_buf, uint8_t len) {
   HAL_UART_Transmit(&huart1, (uint8_t*)tx_buf, len, 1000);
-  // while(__HAL_UART_GET_FLAG(&huart1, UART_FLAG_TC) != SET);
+   while(__HAL_UART_GET_FLAG(&huart1, UART_FLAG_TC) != SET);
 }
 /* USER CODE END 1 */

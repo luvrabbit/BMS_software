@@ -93,6 +93,7 @@ int main(void)
   MX_USART3_UART_Init();
   MX_SPI1_Init();
 
+  /* USER CODE BEGIN 2 */
   for (int i = 0; i < 5; i++) {
     PLCTEST[i] = i + 1;
   }
@@ -110,10 +111,10 @@ int main(void)
     // USART_RX_TX(1);
     delay_us(1);
     times++;
-    if ((times % 500000) == 0) {
+    if ((times % 500) == 0) {
       HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
     }
-//    USART1_TX(PLCTEST, 7);
+    USART1_TX(PLCTEST, 7);
 
   }
   /* USER CODE END 3 */
