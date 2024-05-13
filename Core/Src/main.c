@@ -106,7 +106,7 @@ int main(void)
     if ((times % 500000) == 0) {
       HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
     }
-    USART1_TX(PLCTEST, len);
+    USART1_TX(PLCTEST, 5);
 
   }
   /* USER CODE END 3 */
