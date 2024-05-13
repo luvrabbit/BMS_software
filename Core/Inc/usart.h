@@ -54,6 +54,7 @@ void MX_USART3_UART_Init(void);
 
 /* USER CODE BEGIN Prototypes */
 void USART_RX_TX(uint8_t id);
+void USART1_TX(uint8_t* tx_buf, uint8_t len);
 
 /* USER CODE END Prototypes */
 

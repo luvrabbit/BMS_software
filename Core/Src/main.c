@@ -58,7 +58,7 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+uint8_t PLCTEST[5];
 /* USER CODE END 0 */
 
 /**
@@ -88,23 +88,9 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_USART1_UART_Init();
-  MX_USART3_UART_Init();
-  MX_SPI1_Init();
-  /* USER CODE BEGIN 2 */
-  uint8_t test[4] = {10, 109, 97, 10};
-  uint8_t nrf_tx[32];
-  nrf_init();
-  while(nrf_check()) {
-    delay_us(200000);
-    HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
+  for (int i = 0; i < 5; i++) {
+    PLCTEST[i] = i + 1;
   }
-  nrf_tx_mode();
-  for (int i; i < 32; i++) {
-	  nrf_tx[i] = i;
-  }
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -114,18 +100,14 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-//    USART_RX_TX(1);
-//    USART_RX_TX(3);
+    // USART_RX_TX(1);
     delay_us(1);
     times++;
-    if ((times % 50) == 0) {
+    if ((times % 500000) == 0) {
       HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
     }
-    if (nrf_tx_packet(nrf_tx) == 0) {
-    	if ((times % 500000) == 0) {
-    		HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
-    	}
-    }
+    USART1_TX(PLCTEST, len);
+
   }
   /* USER CODE END 3 */
 }
