@@ -58,7 +58,7 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint8_t PLCTEST[5];
+uint8_t PLCTEST[7];
 /* USER CODE END 0 */
 
 /**
@@ -91,6 +91,8 @@ int main(void)
   for (int i = 0; i < 5; i++) {
     PLCTEST[i] = i + 1;
   }
+  PLCTEST[5] = 0x0d;
+  PLCTEST[6] = 0x0a;
   /* USER CODE END 2 */
 
   /* Infinite loop */
