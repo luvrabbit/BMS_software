@@ -111,6 +111,9 @@ int main(void)
     if ((times % 500000) == 0) {
       HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
     }
+    if ((times % 1000000) == 0) {
+      printf("\r\n running \r\n");
+    }
   }
   /* USER CODE END 3 */
 }
