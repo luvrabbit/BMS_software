@@ -94,8 +94,6 @@ int main(void)
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
   uint8_t test[4] = {10, 109, 97, 10};
-  uint8_t nrf_rx[33];
-  nrf_init();
 
   /* USER CODE END 2 */
 
