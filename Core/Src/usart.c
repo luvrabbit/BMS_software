@@ -24,7 +24,7 @@
 #include "../../Drivers/BSP/PLC/plc.h"
 
 
-// 串口重定�?
+// 串口重定�??
 #ifdef __GNUC__
 #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
 #else
@@ -42,9 +42,9 @@ PUTCHAR_PROTOTYPE
 uint8_t g_usart3_rx_buf[USART_RX_LEN];
 
 /*  接收状�??
- *  bit15�?      接收完成标志
- *  bit14�?      接收�?0x0d
- *  bit13~0�?    接收到的有效字节数目
+ *  bit15�??      接收完成标志
+ *  bit14�??      接收�??0x0d
+ *  bit13~0�??    接收到的有效字节数目
 */
 uint16_t g_usart3_rx_sta = 0;
 
@@ -56,9 +56,9 @@ uint8_t g_usart3_hal_rx_buffer[USART_RX_BUFFER_SIZE];  /* HAL库使用的串口�
 uint8_t g_usart1_rx_buf[USART_RX_LEN];
 
 /*  接收状�??
- *  bit15�?      接收完成标志
- *  bit14�?      接收�?0x0d
- *  bit13~0�?    接收到的有效字节数目
+ *  bit15�??      接收完成标志
+ *  bit14�??      接收�??0x0d
+ *  bit13~0�??    接收到的有效字节数目
 */
 uint16_t g_usart1_rx_sta = 0;
 
@@ -238,43 +238,43 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 /* USER CODE BEGIN 1 */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 	if (huart->Instance == USART3) {                                  // USART3(PC)
-		if ((g_usart3_rx_sta & 0x8000) == 0) {                          // 接收未完�? 
-			if (!(g_usart3_rx_sta & 0x4000)) {                            // 未接收到0x0D（回�?)
-				if (g_usart3_hal_rx_buffer[0] == 0x0d) {                     // 接收�?0x0D
-					g_usart3_rx_sta |= 0x4000;                                // 回车标志�? �?1
+		if ((g_usart3_rx_sta & 0x8000) == 0) {                          // 接收未完�?? 
+			if (!(g_usart3_rx_sta & 0x4000)) {                            // 未接收到0x0D（回�??)
+				if (g_usart3_hal_rx_buffer[0] == 0x0d) {                     // 接收�??0x0D
+					g_usart3_rx_sta |= 0x4000;                                // 回车标志�?? �??1
 				} else {
-          g_usart3_rx_buf[USART3_END] = g_usart3_hal_rx_buffer[0];  // 将接收到的字符放入rx_buf�?
+          g_usart3_rx_buf[USART3_END] = g_usart3_hal_rx_buffer[0];  // 将接收到的字符放入rx_buf�??
           g_usart3_rx_sta += 1;
           if (USART3_END > USART_RX_LEN - 1) {
-            g_usart3_rx_sta = 0;                                    // 接收数据大于200，重新接�?
+            g_usart3_rx_sta = 0;                                    // 接收数据大于200，重新接�??
           }
 				}
 			} else {
         if (g_usart3_hal_rx_buffer[0] == 0x0a) {
           g_usart3_rx_sta |= 0x8000;                                // 接收完成
         } else {
-          g_usart3_rx_sta = 0;                                      // 接收错误，重新接�?
+          g_usart3_rx_sta = 0;                                      // 接收错误，重新接�??
         }
       }
 		}
     HAL_UART_Receive_IT(&huart3, (uint8_t *)g_usart3_hal_rx_buffer, USART_RX_BUFFER_SIZE);
 	} else {                                                          // USART1(PLC)
-    if ((g_usart1_rx_sta & 0x8000) == 0) {                          // 接收未完�? 
-			if (!(g_usart1_rx_sta & 0x4000)) {                            // 未接收到0x0D（回�?)
-				if (g_usart1_hal_rx_buffer[0] == 0x0d) {                     // 接收�?0x0D
-					g_usart1_rx_sta |= 0x4000;                                // 回车标志�? �?1
+    if ((g_usart1_rx_sta & 0x8000) == 0) {                          // 接收未完�?? 
+			if (!(g_usart1_rx_sta & 0x4000)) {                            // 未接收到0x0D（回�??)
+				if (g_usart1_hal_rx_buffer[0] == 0x0d) {                     // 接收�??0x0D
+					g_usart1_rx_sta |= 0x4000;                                // 回车标志�?? �??1
 				} else {
-          g_usart1_rx_buf[USART1_END] = g_usart1_hal_rx_buffer[0];  // 将接收到的字符放入rx_buf�?
+          g_usart1_rx_buf[USART1_END] = g_usart1_hal_rx_buffer[0];  // 将接收到的字符放入rx_buf�??
           g_usart1_rx_sta += 1;
           if (USART1_END > USART_RX_LEN - 1) {
-            g_usart1_rx_sta = 0;                                    // 接收数据大于200，重新接�?
+            g_usart1_rx_sta = 0;                                    // 接收数据大于200，重新接�??
           }
 				}
 			} else {
         if (g_usart1_hal_rx_buffer[0] == 0x0a) {
           g_usart1_rx_sta |= 0x8000;                                // 接收完成
         } else {
-          g_usart1_rx_sta = 0;                                      // 接收错误，重新接�?
+          g_usart1_rx_sta = 0;                                      // 接收错误，重新接�??
         }
       }
 		}
